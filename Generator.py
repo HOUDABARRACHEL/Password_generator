@@ -161,3 +161,50 @@ def ask_length(default_length):
                 print("Désolé, veuillez entrer uniquement un nombre ou laisser vide pour accepter la valeur par défaut. Essayez encore !")
         else:
             return default_length
+
+
+def ask_max_duplicate_chars(default_mdc, charset_len, password_len):
+    if not isinstance(default_mdc, int):
+        raise TypeError
+
+    minimum_mdc = math.ceil(password_len / charset_len)
+
+    if default_mdc:
+        print("Le nombre maximal par défaut d'occurrences d'un caractère est de {} fois.".format(default_mdc))
+    else:
+        print("Par défaut, il n'y a pas de limite quant au nombre de fois qu'un caractère peut apparaître dans le mot de passe.")
+
+    while True:
+        print("Entrez la limite maximale souhaitée pour les caractères dupliqués ou laissez vide pour utiliser la valeur par défaut.")
+        answer = input("Une valeur de 0 signifie aucune limite : ").strip()
+        if answer:
+            try:
+                mdc = int(answer)
+                if mdc >= minimum_mdc:
+                    return mdc
+                else:
+                    print("Désolé, cette limite est trop basse pour l'ensemble de caractères et la longueur du mot de passe donnés.\n"
+                          "Vous devez autoriser au moins {} caractères dupliqués. Essayez encore !".format(minimum_mdc))
+            except ValueError:
+                print("Désolé, veuillez entrer uniquement un nombre ou laissez vide pour accepter la valeur par défaut. Essayez encore !")
+        else:
+            return default_mdc
+ 
+def generate_password(charset, length, max_duplicate_chars):
+    if not isinstance(charset, set) or not isinstance(length, int) or not isinstance(max_duplicate_chars, int):
+        raise TypeError
+
+    my_charset = charset.copy()
+    password = ""
+    while len(password) < length:
+        password += random.SystemRandom().choice(list(my_charset))
+        if max_duplicate_chars:
+            for c in set(password):
+                if password.count(c) >= max_duplicate_chars:
+                    my_charset.discard(c)
+    return password
+
+
+if __name__ == "__main__":
+    main()
+       
