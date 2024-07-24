@@ -93,3 +93,15 @@ def parse_args():
         parser.error("Vous devez activer au moins une classe de caractères ou ajouter des caractères personnalisés !")
     return args
 
+def ask_yn(message, default):
+    if not isinstance(message, str) or not isinstance(default, bool):
+        raise TypeError
+
+    msg = message + (" (O/n) " if default else " (o/N) ")
+    while True:
+        answer = input(msg).lower().strip()
+        if not answer:
+            return default
+        if answer in "on":
+            return answer == "o"
+        print("Désolé, veuillez entrer uniquement [o] ou [n] ou laisser vide pour accepter la valeur par défaut. Essayez encore!")
