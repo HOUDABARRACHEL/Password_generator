@@ -105,3 +105,44 @@ def ask_yn(message, default):
         if answer in "on":
             return answer == "o"
         print("Désolé, veuillez entrer uniquement [o] ou [n] ou laisser vide pour accepter la valeur par défaut. Essayez encore!")
+        
+        
+        
+def make_charset(use_upper, use_lower, use_digits, use_punctuation, use_space, additional, blacklist):
+    if not all(isinstance(x, bool) for x in [use_upper, use_lower, use_digits, use_punctuation, use_space]) \
+            or not all(isinstance(x, str) for x in [additional, blacklist]):
+        raise TypeError
+
+    return set(use_upper * string.ascii_uppercase +
+               use_lower * string.ascii_lowercase +
+               use_digits * string.digits +
+               use_punctuation * string.punctuation +
+               use_space * " " +
+               additional) \
+        .difference(set(blacklist))
+
+
+def ask_charset(default_upper, default_lower, default_digits, default_punctuation, default_space,
+                default_additional, default_blacklist):
+    if not all(isinstance(x, bool) for x in
+               [default_upper, default_lower, default_digits, default_punctuation, default_space]) \
+            or not all(isinstance(x, str) for x in [default_additional, default_blacklist]):
+        raise TypeError
+
+    default_chars = make_charset(default_upper, default_lower, default_digits, default_punctuation, default_space,
+                                 default_additional, default_blacklist)
+
+    print("L'ensemble de caractères par défaut pour générer des mots de passe est le suivant (sans inclure les flèches) :")
+    print("→{}←".format("".join(sorted(default_chars))))
+    if ask_yn("Voulez-vous changer l'ensemble de caractères ?", False):
+
+        return make_charset(
+            ask_yn("Voulez-vous autoriser les lettres majuscules '{}'?".format(string.ascii_uppercase), default_upper),
+            ask_yn("Voulez-vous autoriser les lettres minuscules '{}'?".format(string.ascii_lowercase), default_lower),
+            ask_yn("Voulez-vous autoriser les chiffres '{}'?".format(string.digits), default_digits),
+            ask_yn("Voulez-vous autoriser la ponctuation '{}'?".format(string.punctuation), default_punctuation),
+            ask_yn("Voulez-vous autoriser l'espace '{}'?".format(" "), default_space),
+            input("Veuillez entrer les caractères supplémentaires que vous souhaitez autoriser (le cas échéant) : "),
+            input("Veuillez entrer les caractères que vous souhaitez exclure (le cas échéant) : "))
+    else:
+        return default_chars    
