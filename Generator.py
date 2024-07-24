@@ -146,3 +146,18 @@ def ask_charset(default_upper, default_lower, default_digits, default_punctuatio
             input("Veuillez entrer les caractères que vous souhaitez exclure (le cas échéant) : "))
     else:
         return default_chars    
+    
+def ask_length(default_length):
+    if not isinstance(default_length, int):
+        raise TypeError
+
+    print("La longueur par défaut du mot de passe est de {} caractères.".format(default_length))
+    while True:
+        answer = input("Entrez la longueur souhaitée ou laissez vide pour utiliser la valeur par défaut : ").strip()
+        if answer:
+            try:
+                return int(answer)
+            except ValueError:
+                print("Désolé, veuillez entrer uniquement un nombre ou laisser vide pour accepter la valeur par défaut. Essayez encore !")
+        else:
+            return default_length
