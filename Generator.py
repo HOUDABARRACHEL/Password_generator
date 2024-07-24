@@ -51,3 +51,45 @@ def interactive():
             break
 
     print("Merci d'avoir utiliser ce programme!")
+    
+def parse_args():
+    if len(sys.argv) <= 1:
+        # no arguments --> interactive mode
+        return None
+
+    parser = argparse.ArgumentParser(description="Générateur de mots de passe aléatoires hautement personnalisable",
+                                     epilog="Lancez-le sans aucun argument pour le mode interactif.")
+
+    parser.add_argument("length", action="store", type=int,
+                        help="Quelle est la longueur du mot de passe que vous voulez générer ?")
+    parser.add_argument("-n", "--amount", action="store", type=int, dest="amount", default=1,
+                        help="Combien de mots de passe voulez-vous créer ?")
+    parser.add_argument("-m", "--max-duplicate-chars", action="store", dest="max_dupe", default=0, metavar="LIMIT",
+                        help="Combien de fois un caractère peut-il se répéter dans votre mot de passe ?")
+
+    parser.add_argument("-q", "--quiet", action="store_true", dest="quiet",
+                        help="Mode silencieux (aucun message affiché)")
+
+    p_charset = parser.add_argument_group("Spécification de l'ensemble de caractères")
+    p_charset.add_argument("-u", "--uppercase", action="store_true", dest="use_upper",
+                           help="Le mot de passe peut contenir des lettres majuscules de A à Z.")
+    p_charset.add_argument("-l", "--lowercase", action="store_true", dest="use_lower",
+                           help="Le mot de passe peut contenir des lettres minuscules de a à z.")
+    p_charset.add_argument("-d", "--digits", action="store_true", dest="use_digits",
+                           help="Le mot de passe peut contenir des chiffres.")
+    p_charset.add_argument("-p", "--punctuation", action="store_true", dest="use_punctuation",
+                           help="Inclure la ponctuation dans l'ensemble de caractères disponible.")
+    p_charset.add_argument("-s", "--space", action="store_true", dest="use_space",
+                           help="Inclure l'espace standard dans l'ensemble de caractères disponible.")
+
+    p_charset.add_argument("-a", "--additional", action="store", default="", dest="additional",
+                           help="Caractères supplémentaires à inclure dans l'ensemble de caractères disponible.")
+    p_charset.add_argument("-b", "--blacklist", action="store", default="", dest="blacklist",
+                           help="Caractères à exclure de l'ensemble de caractères disponible.")
+
+    args = parser.parse_args()
+    if not any([args.use_upper, args.use_lower, args.use_digits, args.use_punctuation, args.use_space,
+               args.additional]):
+        parser.error("Vous devez activer au moins une classe de caractères ou ajouter des caractères personnalisés !")
+    return args
+
