@@ -30,3 +30,24 @@ def automatic(args):
     for _ in range(args.amount):
         password = generate_password(charset, args.length, args.max_dupe)
         print(password)
+        
+def interactive():
+   
+    print()
+
+    charset = ask_charset(True, True, True, True, True, "", "")
+    length = ask_length(12)
+    max_duplicate_chars = ask_max_duplicate_chars(0, len(charset), length)
+
+    while True:
+        password = generate_password(charset, length, max_duplicate_chars)
+
+        print("Voila votre mot de passe :")
+        print("+-" + len(password) * "-" + "-+")
+        print("| " + password + " |")
+        print("+-" + len(password) * "-" + "-+")
+
+        if not ask_yn("Est-ce que vous voullez generer un autre mot de passe avec les memes conditio que vous avez choisi ?", True):
+            break
+
+    print("Merci d'avoir utiliser ce programme!")
